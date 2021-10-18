@@ -321,12 +321,14 @@ return binaryString;
 
    //function to print matrix
     public void printMatrixBinary(int[][] mat){
+        System.out.print("\t");
         for(int i=0;i<mat.length;i++){
             for(int j=0;j<mat[0].length;j++){
                 System.out.print(toBinary4(mat[i][j])+"\t");
             }
-            System.out.println();
-        }
+           
+        } 
+        System.out.println();
     }
 
     //pre round transformation in AES Encryption
@@ -344,25 +346,25 @@ return binaryString;
         AES_variant ob=new AES_variant();
         int [][] substitutedNibbles = ob.substituteNibbles(plaintext_after_pre_round_transformation);
         if(printIntermediateValues){
-            System.out.println("\tAfter substitute nibbles round1");
+            System.out.println("[s00-s01-s10-s11] After substitute nibbles round1");
             printMatrixBinary(substitutedNibbles);
         }
         //shift rows
         int [][] shift_rows = ob.shiftRows(substitutedNibbles);
         if(printIntermediateValues){
-            System.out.println("\tAfter shift rows round1");
+            System.out.println("[s00-s01-s10-s11] After shift rows round1");
             printMatrixBinary(shift_rows);
         }
         //mix columns
         int [][] mix_cols = ob.mixColumns(shift_rows);
         if(printIntermediateValues){
-            System.out.println("\tAfter mix column round1");
+            System.out.println("[s00-s01-s10-s11] After mix column round1");
             printMatrixBinary(mix_cols);
         }
         //add round key
         int [][] round_1key_add = ob.addRoundKey(mix_cols, key_2, key_3);
         if(printIntermediateValues){
-            System.out.println("\tAfter round key add round1");
+            System.out.println("[s00-s01-s10-s11] After round key add round1");
             printMatrixBinary(round_1key_add);
         }
         int[][] state_end_round_1 = round_1key_add;
@@ -375,20 +377,20 @@ return binaryString;
         AES_variant ob=new AES_variant();
         int [][] substitutedNibbles = ob.substituteNibbles(state_end_round_1);
         if(printIntermediateValues){
-            System.out.println("\tAfter substitute nibbles round2");
+            System.out.println("[s00-s01-s10-s11] After substitute nibbles round2");
             printMatrixBinary(substitutedNibbles);
         }
         //shift rows
         int [][] shift_rows = ob.shiftRows(substitutedNibbles);
         if(printIntermediateValues){
-            System.out.println("\tAfter shift rows round2");
+            System.out.println("[s00-s01-s10-s11] After shift rows round2");
             printMatrixBinary(shift_rows);
         }
         
         //add round key
         int [][] round_2key_add = ob.addRoundKey(shift_rows, key_4, key_5);
         if(printIntermediateValues){
-            System.out.println("\tAfter round key add round2");
+            System.out.println("[s00-s01-s10-s11] After round key add round2");
             printMatrixBinary(round_2key_add);
         }
         
@@ -415,13 +417,7 @@ return binaryString;
         int[] key_expanded = ob.expandKey(original_key);
 
         
-        if(printIntermediateValues){
-            System.out.println("Expanded keys");
-            for(int i=0;i<key_expanded.length;i++){
-                System.out.println("word["+i+"] : "+ toBinary(key_expanded[i]));
-                
-            }
-        }
+        
 
         // Preround transformation
         int[] plaintext_bits = ob.extractBits(plaintext);
@@ -432,12 +428,15 @@ return binaryString;
         int[][] pre_round_plaintext =ob.preRoundTransformation(plaintext_bits_matrix, key_expanded[0], key_expanded[1]);
         
      if(printIntermediateValues){
-               System.out.println("After pre round transformation");
+            System.out.println("Key K0 : "+toBinary(key_expanded[0]<<8 | key_expanded[1]));
+            System.out.println("After pre round transformation");
             printMatrixBinary(pre_round_plaintext);
+            
         }
         //round 1
         int[][] state_end_round_1 =ob.round1Encryption(pre_round_plaintext,  key_expanded[2], key_expanded[3], printIntermediateValues);
         if(printIntermediateValues){
+            System.out.println("Key K1 : "+toBinary(key_expanded[2]<<8 | key_expanded[3]));
             System.out.println("After round 1 transformation");
             printMatrixBinary(state_end_round_1);
         }
@@ -445,15 +444,13 @@ return binaryString;
 
         int[][] state_end_round_2 =ob.round2Encryption(state_end_round_1,  key_expanded[4], key_expanded[5], printIntermediateValues);
         if(printIntermediateValues){
+            System.out.println("Key K2 : "+toBinary(key_expanded[4]<<8 | key_expanded[5]));
             System.out.println("After round 2 transformation");
             printMatrixBinary(state_end_round_2);
         }
         int ciphertext = ob.returnSimplifiedMatrix(state_end_round_2);
 
-        if(printIntermediateValues){
-            System.out.println("Ciphertext "+ciphertext);
-            
-        }
+        
         return ciphertext;
 
 
@@ -467,13 +464,14 @@ return binaryString;
         AES_variant ob=new AES_variant();
         int [][] add_round1_key_inverse = ob.addRoundKey(ciphertext_bits_matrix, key4, key5);
         if(printIntermediateValues){
-            System.out.println("\tAfter round key add round1 inverse");
+            
+            System.out.println("[s00-s01-s10-s11] After pre round transformation inverse");
             printMatrixBinary(add_round1_key_inverse);
         }
         //shift rows
         int [][] shift_rows_round1_inverse = ob.shiftRows(add_round1_key_inverse);
         if(printIntermediateValues){
-            System.out.println("\tAfter shift rows round1 inverse");
+            System.out.println("[s00-s01-s10-s11] After shift rows round1 inverse");
             printMatrixBinary(shift_rows_round1_inverse);
         }
 
@@ -481,7 +479,7 @@ return binaryString;
         //substitute
         int [][] substitutedNibbles_round1_inverse = ob.substituteNibblesInverse(shift_rows_round1_inverse);
         if(printIntermediateValues){
-            System.out.println("\tAfter substitute nibbles round2");
+            System.out.println("[s00-s01-s10-s11] After substitute nibbles round2");
             printMatrixBinary(substitutedNibbles_round1_inverse);
         }
 
@@ -500,27 +498,27 @@ return binaryString;
         // add round key
         int [][] add_round2_key_inverse = ob.addRoundKey(state_end_round1_inverse,key2, key3);
         if(printIntermediateValues){
-            System.out.println("\tAfter round key add round2 inverse");
+            System.out.println("[s00-s01-s10-s11] After round key add round1 inverse");
             printMatrixBinary(add_round2_key_inverse);
         }
 
         //mix columns
         int [][] mix_col_round2_inverse = ob.mixColumnsInverse(add_round2_key_inverse);
         if(printIntermediateValues){
-            System.out.println("\tAfter mix column round2 inverse");
+            System.out.println("[s00-s01-s10-s11] After mix column round2 inverse");
             printMatrixBinary(mix_col_round2_inverse);
         }
 
         //shift rows
         int [][] shift_rows_round2_inverse = ob.shiftRows(mix_col_round2_inverse);
         if(printIntermediateValues){
-            System.out.println("\tAfter shift rows round2 inverse");
+            System.out.println("[s00-s01-s10-s11] After shift rows round2 inverse");
             printMatrixBinary(shift_rows_round2_inverse);
         }
         //substitute 
         int [][] substitutedNibbles_round2_inverse = ob.substituteNibblesInverse(shift_rows_round2_inverse);
         if(printIntermediateValues){
-            System.out.println("\tAfter substitute nibbles round2 inverse");
+            System.out.println("[s00-s01-s10-s11] After substitute nibbles round2 inverse");
             printMatrixBinary(substitutedNibbles_round2_inverse);
         }
 
@@ -549,13 +547,7 @@ return binaryString;
         //key expansion
         int[][] original_key = ob.arrangeMatrix(extractedBitsKey);
         int[] key_expanded = ob.expandKey(original_key);
-        if(printIntermediateValues){
-            System.out.println("Expanded keys");
-            for(int i=0;i<key_expanded.length;i++){
-                System.out.println("word["+i+"] : "+ toBinary(key_expanded[i]));
-                
-            }
-        }
+        
 
         
         
@@ -566,18 +558,26 @@ return binaryString;
         
         
         //round 1 inverse
-        
+        if(printIntermediateValues){
+            System.out.println("Key K2 : "+toBinary(key_expanded[4]<<8 | key_expanded[5]));
+           
+        }
         int [][] state_end_round1_inverse = ob.round1Decryption(ciphertext_bits_matrix, key_expanded[4],key_expanded[5], printIntermediateValues);
 
         if(printIntermediateValues){
+            
             System.out.println("After round 1 inverse transformation");
             printMatrixBinary(state_end_round1_inverse);
         }
         //round 2 inverse
-       
+        if(printIntermediateValues){
+            System.out.println("Key K1 : "+toBinary(key_expanded[2]<<8 | key_expanded[3]));
+           
+        }
         int [][] state_end_round2_inverse = ob.round2Decryption(state_end_round1_inverse, key_expanded[2],key_expanded[3], printIntermediateValues);
 
         if(printIntermediateValues){
+            
             System.out.println("After round 2 inverse transformation");
             printMatrixBinary(state_end_round2_inverse);
         }
@@ -585,8 +585,9 @@ return binaryString;
         int[][] plaintext_formed = ob.postRoundTransformation(state_end_round2_inverse,  key_expanded[0],key_expanded[1]);
         
         if(printIntermediateValues){
-            System.out.println("After post round transformation");
+            System.out.println("After round 2 add key transformation");
             printMatrixBinary(plaintext_formed);
+            System.out.println("Key K0 : "+toBinary(key_expanded[0]<<8 | key_expanded[1]));
      }
 
         int plaintext = ob.returnSimplifiedMatrix(plaintext_formed);
@@ -616,6 +617,7 @@ return binaryString;
         }
         boolean printIntermediateValues=false;
         if(input_plaintext.length()<=2){
+            System.out.println("You are viewing the intermediate values because the input can fit in 16bits");
             printIntermediateValues=true;
         }
         for(int i=0;i<length_input_plaintext;i+=2){
@@ -658,6 +660,7 @@ return binaryString;
         }
         boolean printIntermediateValues=false;
         if(ciphertexts.size()==1){
+            System.out.println("You are viewing the intermediate values because the input can fit in 16bits");
             printIntermediateValues=true;
         }
         StringBuilder plaintext_final=new StringBuilder();
